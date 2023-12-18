@@ -4,29 +4,28 @@ import Image from "next/image";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import * as users_actions from "@/store/actions/users-actions";
-import { UnknownAction } from "redux";
-import { RootState } from "@/store/store";
+import { useStore } from "../store";
 
 const Login = () => {
 	/* Hooks ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	const router = useRouter();
-	const dispatch = useDispatch();
 	const supabase = createClientComponentClient();
-	const users = useSelector((store: RootState) => store.users);
+	const { user, loginUser, signupUser } = useStore((store) => store);
 
 	const [showLogin, setShowLogin] = useState(true);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const [username, setUsername] = useState("");
+
+	/* Effects ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	useEffect(() => {
-		if (users.user) {
+		if (user) {
 			router.push("/");
 		}
-	}, [users.user]);
+	}, [user]);
 
 	/* Handlers ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -42,11 +41,9 @@ const Login = () => {
 			alert(error.message);
 			return;
 		} else {
-			dispatch(
-				users_actions.loginUser(data?.user?.id, () => {
-					router.push("/");
-				}) as unknown as UnknownAction
-			);
+			loginUser(data?.user?.id, () => {
+				router.push("/");
+			});
 		}
 	};
 
@@ -57,31 +54,11 @@ const Login = () => {
 			return;
 		}
 
-		const { data, error } = await supabase.auth.signUp({
-			email,
-			password,
-			options: {
-				emailRedirectTo: `/`,
-			},
-		});
-
-		if (error) {
-			// Handle Errors TODO: Imeplement toastr errors
-			alert(error.message);
-			return;
-		} else {
-			// Insert user into profile table
-			const { error } = await supabase
-				.from("Profile")
-				.insert({ UID: data?.user?.id });
-			if (error) {
-				// Handler Errors
-				alert(error.message);
-				return;
-			} else {
+		signupUser({ email, password, username }, (id) => {
+			loginUser(id, () => {
 				router.push("/");
-			}
-		}
+			});
+		});
 	};
 
 	/* Render ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -136,6 +113,16 @@ const Login = () => {
 								onChange={(e) =>
 									setConfirmPassword(e.target.value)
 								}
+							/>
+						</div>
+					)}
+					{!showLogin && (
+						<div className="mt-4 w-full">
+							<input
+								placeholder="username"
+								className="w-full border-[1px] px-4 py-1 rounded-md shadow-sm"
+								value={username}
+								onChange={(e) => setUsername(e.target.value)}
 							/>
 						</div>
 					)}

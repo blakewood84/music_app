@@ -3,30 +3,22 @@ import Link from "next/link";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
 import { NAV_LINKS } from "@/constants";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
-import * as users_actions from "@/store/actions/users-actions";
-import { UnknownAction } from "redux";
 import { useEffect } from "react";
+import { useStore } from "@/app/store";
 
 const Nav = () => {
 	/* Hooks ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	const router = useRouter();
-	const dispatch = useDispatch();
-	const supabase = createClientComponentClient();
-	const users = useSelector((store: RootState) => store.users);
+	const { user, logoutUser, loginUser, isUserLoggedIn } = useStore(
+		(store) => store
+	);
 
 	useEffect(() => {
-		if (!users.user) {
-			supabase.auth.getUser().then(({ data, error }) => {
-				if (data?.user) {
-					dispatch(
-						users_actions.loginUser(data.user.id, () => {
-							router.refresh();
-						}) as unknown as UnknownAction
-					);
+		if (!user) {
+			isUserLoggedIn().then((id) => {
+				if (id) {
+					loginUser(id);
 				}
 			});
 		}
@@ -39,11 +31,7 @@ const Nav = () => {
 	};
 
 	const handleLogout = async () => {
-		dispatch(
-			users_actions.logoutUser(() => {
-				router.push("/");
-			}) as unknown as UnknownAction
-		);
+		logoutUser();
 	};
 
 	/* Render ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -70,7 +58,7 @@ const Nav = () => {
 
 			{/* -- Auth -- */}
 			<div>
-				{users.user ? (
+				{user ? (
 					<Button label="Log Out" callback={handleLogout} />
 				) : (
 					<Button label="Log In" callback={handleLogin} />
