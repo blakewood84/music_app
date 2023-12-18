@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "toastr/build/toastr.min.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 

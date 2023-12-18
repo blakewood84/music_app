@@ -5,6 +5,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useStore } from "../store";
+const toastr = require("toastr");
 
 const Login = () => {
 	/* Hooks ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -38,7 +39,7 @@ const Login = () => {
 		});
 
 		if (error) {
-			alert(error.message);
+			toastr.error(error.message);
 			return;
 		} else {
 			loginUser(data?.user?.id, () => {
@@ -50,7 +51,7 @@ const Login = () => {
 	const handleSignUp = async () => {
 		if (!email || !password || !confirmPassword) return;
 		if (password !== confirmPassword) {
-			alert("Passwords do not match");
+			toastr.error("Passwords do not match");
 			return;
 		}
 

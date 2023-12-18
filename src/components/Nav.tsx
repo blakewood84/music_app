@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { NAV_LINKS } from "@/constants";
 import { useEffect } from "react";
 import { useStore } from "@/app/store";
+const toastr = require("toastr");
 
 const Nav = () => {
 	/* Hooks ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/

@@ -1,5 +1,6 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { create } from "zustand";
+const toastr = require("toastr");
 
 interface Store {
 	user?: Object | null;
@@ -36,7 +37,7 @@ export const useStore = create<Store>((set) => ({
 			.select("*")
 			.eq("username", user.username);
 		if (profileData?.data?.length) {
-			alert("Username is taken");
+			toastr.error("Username is already in use");
 			return;
 		}
 
@@ -51,7 +52,7 @@ export const useStore = create<Store>((set) => ({
 
 		if (error) {
 			// Handle Errors TODO: Imeplement toastr errors
-			alert(error.message);
+			toastr.error(error.message);
 			return;
 		} else {
 			// Insert user into profile table
@@ -61,7 +62,7 @@ export const useStore = create<Store>((set) => ({
 
 			if (error) {
 				// Handler Errors
-				alert(error.message);
+				toastr.error(error.message);
 				return;
 			} else {
 				if (data?.user?.id) callback(data?.user?.id);
