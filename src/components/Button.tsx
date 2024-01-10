@@ -1,30 +1,23 @@
-import React from "react";
+import Link from "next/link";
+import { Button as UIButton } from "./ui/button";
 
 interface ButtonProps {
 	label: string;
-	callback: Function;
+	callback?: Function;
 	full?: boolean;
+	href?: string;
+	type?: "submit";
 }
 
-const Button = ({ label, callback, full }: ButtonProps) => {
-	/* Handlers ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-	const handleClick = () => {
-		callback && callback();
-	};
-
-	/* Render ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
+export const Button = ({ label, callback, full, href, type }: ButtonProps) => {
 	return (
-		<button
-			className={`py-2 px-4 text-white bg-black my-2 rounded-md text-sm cursor-pointer hover:bg-gray-900 focus:bg-gray-800
-      ${full && "w-full"}
-      `}
-			onClick={handleClick}
+		<UIButton
+			type={type}
+			className={`my-2 ${full && "w-full"}`}
+			size="sm"
+			onClick={callback && (() => callback())}
 		>
-			{label}
-		</button>
+			{href ? <Link href={href}>{label}</Link> : label}
+		</UIButton>
 	);
 };
-
-export default Button;

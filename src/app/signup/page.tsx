@@ -3,9 +3,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useStore } from "../../store/store";
-import Login from "@/features/auth/login/Login";
+import Signup from "@/features/auth/signup/Signup";
 
-const LoginPage = () => {
+const SignupPage = () => {
 	const router = useRouter();
 	const { user } = useStore((store) => store);
 
@@ -13,7 +13,7 @@ const LoginPage = () => {
 		if (user) {
 			router.push("/");
 		}
-	}, [user, router]);
+	}, [user]);
 
 	return (
 		<section className="w-full h-[calc(100vh-76px)] flex justify-center items-center">
@@ -25,9 +25,9 @@ const LoginPage = () => {
 				width={100}
 			/>
 
-			<Login />
+			<Signup/>
 		</section>
 	);
 };
 
-export default LoginPage;
+export default SignupPage;

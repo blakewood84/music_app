@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "toastr/build/toastr.min.css";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import { Nav, Footer } from "@/components";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
 	title: "Music App",
@@ -20,6 +19,7 @@ export default function RootLayout({
 				<Nav />
 				<main className="min-h-[calc(100vh-76px)]">{children}</main>
 				<Footer />
+				<Toaster />
 			</body>
 		</html>
 	);

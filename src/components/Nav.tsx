@@ -1,19 +1,14 @@
 "use client";
 import Link from "next/link";
-import Button from "./Button";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components";
 import { NAV_LINKS } from "@/constants";
 import { useEffect } from "react";
-import { useStore } from "@/app/store";
-const toastr = require("toastr");
+import { useStore } from "@/store/store";
+import useAuth from "@/hooks/useAuth";
 
-const Nav = () => {
-	/* Hooks ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-	const router = useRouter();
-	const { user, logoutUser, loginUser, isUserLoggedIn } = useStore(
-		(store) => store
-	);
+export const Nav = () => {
+	const { loginUser, isUserLoggedIn, logoutUser } = useAuth();
+	const { user } = useStore((store) => store);
 
 	useEffect(() => {
 		if (!user) {
@@ -25,17 +20,9 @@ const Nav = () => {
 		}
 	}, []);
 
-	/* Handlers ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-	const handleLogin = () => {
-		router.push("/login");
-	};
-
 	const handleLogout = async () => {
 		logoutUser();
 	};
-
-	/* Render ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 	return (
 		<nav className="flex justify-between items-center px-2">
@@ -62,11 +49,9 @@ const Nav = () => {
 				{user ? (
 					<Button label="Log Out" callback={handleLogout} />
 				) : (
-					<Button label="Log In" callback={handleLogin} />
+					<Button label="Log In" href={"/login"} />
 				)}
 			</div>
 		</nav>
 	);
 };
-
-export default Nav;
